@@ -1,29 +1,25 @@
-from aiogram import types, Dispatcher, Bot, Router
-from aiogram.filters import CommandStart
+from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram_dialog import setup_dialogs
-from aiogram_dialog import DialogManager, StartMode
 
-from bot.dialogs.registration import start_dialog
-from bot.utils.statesform import Registration
+from bot.dialogs.registration import router as start_router, start_dialog
+from bot.dialogs.main_menu import router as menu_router, main_menu_dialog
+from bot.handlers.commands import router as command_router
 from configurations import get_config
 
 config = get_config()
 
 bot = Bot(token=config.bot_config.get_token(), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
-router = Router()
-
-
-@router.message(CommandStart())
-async def command_start_process(message: types.Message, dialog_manager: DialogManager):
-    await dialog_manager.start(state=Registration.get_first_name, mode=StartMode.RESET_STACK)
 
 
 def main():
-    dp.include_router(router)
+    dp.include_router(start_router)
+    dp.include_router(menu_router)
     dp.include_router(start_dialog)
+    dp.include_router(main_menu_dialog)
+    dp.include_router(command_router)
     setup_dialogs(dp)
     dp.run_polling(bot)
 

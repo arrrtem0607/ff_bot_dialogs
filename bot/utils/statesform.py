@@ -8,3 +8,10 @@ class Registration(StatesGroup):
     get_payment_details = State()
     get_bank_name = State()
     review_data = State()
+
+
+class MainMenu(StatesGroup):
+    main = State()
+    packer_menu = State()
+    administrator_menu = State()
+    manager_menu = State()
