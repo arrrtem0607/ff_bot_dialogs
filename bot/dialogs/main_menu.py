@@ -9,20 +9,25 @@ from bot.utils.roles import UserRole
 
 router = Router()
 
+
 async def get_role(dialog_manager: DialogManager, **kwargs):
     role = dialog_manager.current_context().dialog_data.get("role", UserRole.PACKER)
     return {"role": role.value}
+
 
 async def on_role_select(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
     role = button.widget_id
     dialog_manager.current_context().dialog_data["role"] = role
     await dialog_manager.switch_to(MainMenu.main)
 
+
 async def packer_menu(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(MainMenu.packer_menu)
 
+
 async def administrator_menu(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(MainMenu.administrator_menu)
+
 
 async def manager_menu(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
     await dialog_manager.switch_to(MainMenu.manager_menu)

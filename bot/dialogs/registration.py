@@ -55,23 +55,23 @@ async def review_getter(dialog_manager: DialogManager, **kwargs):
 
 # Callback handlers for changing data
 async def change_first_name(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.start(Registration.get_first_name, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(Registration.get_first_name)
 
 
 async def change_second_name(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.start(Registration.get_second_name, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(Registration.get_second_name)
 
 
 async def change_number(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.start(Registration.get_number, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(Registration.get_number)
 
 
 async def change_payment_details(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.start(Registration.get_payment_details, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(Registration.get_payment_details)
 
 
 async def change_bank_name(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.start(Registration.get_bank_name, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(Registration.get_bank_name)
 
 
 async def confirm_data(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
