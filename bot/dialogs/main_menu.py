@@ -1,13 +1,12 @@
-from aiogram import Router
 from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, DialogManager, Window
 from aiogram_dialog.widgets.kbd import Button, Group, Row
-from aiogram_dialog.widgets.text import Const
+from aiogram_dialog.widgets.text import Const,
+from aiogram_dialog.widgets import
+from bot.utils.statesform import ChangeData, PackingProcess, Statistics
 
 from bot.utils.statesform import MainMenu
 from bot.utils.roles import UserRole
-
-router = Router()
 
 
 async def get_role(dialog_manager: DialogManager, **kwargs):
@@ -21,42 +20,34 @@ async def on_role_select(c: CallbackQuery, button: Button, dialog_manager: Dialo
     await dialog_manager.switch_to(MainMenu.main)
 
 
-async def packer_menu(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.switch_to(MainMenu.packer_menu)
+async def navigate_to_change_data(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.start(ChangeData.change_first_name)
 
 
-async def administrator_menu(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.switch_to(MainMenu.administrator_menu)
+async def navigate_to_packing_process(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.start(PackingProcess.product_selection)
 
 
-async def manager_menu(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.switch_to(MainMenu.manager_menu)
+async def navigate_to_statistics(c: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.start(Statistics.start)
 
+
+# Функция для проверки нескольких ролей
+async def has_roles(dialog_manager: DialogManager, roles: list, **kwargs):
+    role = dialog_manager.current_context().dialog_data.get("role")
+    return role in roles
+
+# Главное меню диалог
 main_menu_dialog = Dialog(
     Window(
-        Const("Выберите свою роль:"),
+        Const("Главное меню"),
         Group(
             Row(
-                Button(Const("Упаковщик"), id="packer", on_click=on_role_select),
-                Button(Const("Администратор"), id="administrator", on_click=on_role_select),
-                Button(Const("Менеджер"), id="manager", on_click=on_role_select),
+                Button(Const("Изменить данные"), id="change_data", on_click=navigate_to_change_data, when=When(lambda dialog_manager, **kwargs: has_roles(dialog_manager, ["packer", "admin", "manager", "loader"]))),
+                Button(Const("Процесс упаковки"), id="packing_process", on_click=navigate_to_packing_process, when=When(lambda dialog_manager, **kwargs: has_roles(dialog_manager, ["packer"]))),
+                Button(Const("Статистика"), id="statistics", on_click=navigate_to_statistics, when=When(lambda dialog_manager, **kwargs: has_roles(dialog_manager, ["admin", "manager"]))),
             ),
         ),
         state=MainMenu.main,
-    ),
-    Window(
-        Const("Главное меню для упаковщика"),
-        Button(Const("Начать упаковку"), id="start_packing", on_click=packer_menu),
-        state=MainMenu.packer_menu,
-    ),
-    Window(
-        Const("Главное меню для администратора"),
-        Button(Const("Управление пользователями"), id="manage_users", on_click=administrator_menu),
-        state=MainMenu.administrator_menu,
-    ),
-    Window(
-        Const("Главное меню для менеджера"),
-        Button(Const("Просмотр отчетов"), id="view_reports", on_click=manager_menu),
-        state=MainMenu.manager_menu,
     )
 )
